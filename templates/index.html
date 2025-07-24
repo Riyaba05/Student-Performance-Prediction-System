@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Performance Predictor</title>
+</head>
+<body>
+    <h1>Student Performance Prediction</h1>
+    <form method="POST" action="/predict">
+        <label>Study Hours:</label><input type="number" name="study_hours" step="0.1"><br>
+        <label>Attendance:</label><input type="number" name="attendance"><br>
+        <label>Previous Score:</label><input type="number" name="previous_score"><br>
+        <label>Extra Activities (0/1):</label><input type="number" name="extra_activities"><br>
+        <label>Parental Support (0/1):</label><input type="number" name="parental_support"><br>
+        <label>Health Index:</label><input type="number" name="health_index"><br>
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+        <h2>{{ prediction }}</h2>
+    {% endif %}
+</body>
+</html>
