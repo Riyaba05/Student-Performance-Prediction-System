@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body>
+    <h1>Prediction Result</h1>
+    <h2>{{ prediction }}</h2>
+    <p>{{ feedback }}</p>
+
+    {% if show_chart %}
+        <img src="{{ url_for('static', filename='comparison.png') }}" alt="Score Comparison">
+    {% endif %}
+
+    <a href="/">Go Back</a>
+</body>
+</html>
+

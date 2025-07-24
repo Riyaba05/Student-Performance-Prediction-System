@@ -1,30 +1,35 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import classification_report
 import joblib
-import os
 
-# Create 'models' folder if it doesn't exist
-os.makedirs("models", exist_ok=True)
+# Load your data
+df = pd.read_csv(r"R:\student-performance-ml\Student-Performance-Prediction-System\data\StudentsPerformance.csv")
 
-# Load dataset
-df = pd.read_csv("R:\student-performance-ml\Student-Performance-Prediction-System\data\student_data.csv")
+# Convert categorical columns
+label_encoders = {}
+categorical_cols = ["gender", "race/ethnicity", "parental level of education", "lunch", "test preparation course"]
 
-# Features and target
-X = df[['study_hours', 'attendance', 'previous_score', 'extra_activities', 'parental_support', 'health_index']]
-y = df['pass']
+for col in categorical_cols:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col])
+    label_encoders[col] = le
 
-# Scale the data
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+# Define features and label
+X = df.drop(columns=["math score", "reading score", "writing score"])  # inputs
+y = ((df["math score"] + df["reading score"] + df["writing score"]) / 3 >= 60).astype(int)  # pass = 1, fail = 0
 
-# Train the model
+# Split data and train model
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 model = LogisticRegression()
-model.fit(X_scaled, y)
+model.fit(X_train, y_train)
 
-# Save model and scaler
-joblib.dump(model, 'models/logistic_model.pkl')
-joblib.dump(scaler, 'models/scaler.pkl')
+# Evaluate
+print(classification_report(y_test, model.predict(X_test)))
 
-print("✅ Model and scaler saved to /models/")
+# Save model and label encoders
+joblib.dump(model, "models/logistic_model.pkl")
+joblib.dump(label_encoders, "models/label_encoders.pkl")
